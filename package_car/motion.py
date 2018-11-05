@@ -26,16 +26,22 @@ def InitGPIO():
   GPIO.setup(PIN_5,GPIO.OUT)
   GPIO.setup(PIN_6,GPIO.OUT)
   
-  pin1=GPIO.PWM(PIN_1,FORWARD)
-  pin4=GPIO.PWM(PIN_4,FORWARD)
-  pin5=GPIO.PWM(PIN_4,FORWARD)
-  pin6=GPIO.PWM(PIN_4,FORWARD)
+  pin1=GPIO.PWM(PIN_1,50)
+  pin4=GPIO.PWM(PIN_4,50)
+  pin5=GPIO.PWM(PIN_5,50)
+  pin6=GPIO.PWM(PIN_6,50)
+  
+  pin1.start(0)
+  pin4.start(0)
+  pin5.start(0)
+  pin6.start(0)
   
 def Forward(sleep_time):
   pin1.ChangeDutyCycle(FORWARD)
   pin4.ChangeDutyCycle(0)
   pin5.ChangeDutyCycle(FORWARD)
   pin6.ChangeDutyCycle(0)
+  print("[MOTION]Forward\n")
   time.sleep(sleep_time)
   
 def Back(sleep_time):
@@ -43,6 +49,7 @@ def Back(sleep_time):
   pin4.ChangeDutyCycle(BACK)
   pin5.ChangeDutyCycle(0)
   pin6.ChangeDutyCycle(BACK)
+  print("[MOTION]Back\n")
   time.sleep(sleep_time)
   
 def RightSlow(sleep_time):
@@ -50,6 +57,7 @@ def RightSlow(sleep_time):
   pin4.ChangeDutyCycle(0)
   pin5.ChangeDutyCycle(SLOW_LOW)
   pin6.ChangeDutyCycle(0)
+  print("[MOTION]RightSlow\n")
   time.sleep(sleep_time)
   
 def RightFast(sleep_time):
@@ -57,6 +65,7 @@ def RightFast(sleep_time):
   pin4.ChangeDutyCycle(0)
   pin5.ChangeDutyCycle(SLOW_HIGH)
   pin6.ChangeDutyCycle(0)
+  print("[MOTION]RightFast\n")
   time.sleep(sleep_time)
 
 def LeftSlow(sleep_time):
@@ -64,6 +73,7 @@ def LeftSlow(sleep_time):
   pin4.ChangeDutyCycle(0)
   pin5.ChangeDutyCycle(FAST_LOW)
   pin6.ChangeDutyCycle(0)
+  print("[MOTION]LeftSlow\n")
   time.sleep(sleep_time)
   
 def LeftFast(sleep_time):
@@ -71,6 +81,7 @@ def LeftFast(sleep_time):
   pin4.ChangeDutyCycle(0)
   pin5.ChangeDutyCycle(FAST_HIGH)
   pin6.ChangeDutyCycle(0)
+  print("[MOTION]LeftFast\n")
   time.sleep(sleep_time)
 
   
@@ -79,6 +90,7 @@ def brake(sleep_time):
   pin4.ChangeDutyCycle(0)
   pin5.ChangeDutyCycle(0)
   pin6.ChangeDutyCycle(0)
+  print("[MOTION]Brake\n")
   time.sleep(sleep_time)
   
 
