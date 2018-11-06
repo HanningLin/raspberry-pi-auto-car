@@ -7,15 +7,14 @@ PIN_4=16#GPIO.4
 PIN_5=18#GPIO.5
 PIN_6=22#GPIO.6
 #init global parameter
-FORWARD=70
+FORWARD=50
 BACK=30
 #FAST
-FAST_HIGH=70
-SLOW_HIGH=30
-
+FAST_HIGH=42
+SLOW_HIGH=15
 #SLOW
-FAST_LOW=40
-SLOW_LOW=30
+FAST_LOW=42
+SLOW_LOW=18
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(PIN_1,GPIO.OUT)
 GPIO.setup(PIN_4,GPIO.OUT)
@@ -29,22 +28,23 @@ pin1.start(0)
 pin4.start(0)
 pin5.start(0)
 pin6.start(0)
+SLEEP_TIME=0.1
 
 def get_edge(img,RATIO):
     h,w,d=img.shape
     h,w=int(h*RATIO),int(w*RATIO)
     frame = cv.resize(img, (w,h))
-    gray=cv.cvtColor(img,cv.COLOR_BGR2GRAY)
+    gray=cv.cvtColor(frame,cv.COLOR_BGR2GRAY)
     #直接阈值化是对输入的单通道矩阵逐像素进行阈值分割。
     ret, binary = cv.threshold(gray, 0, 255, cv.THRESH_BINARY+cv.THRESH_OTSU)
     #close
     kernel = cv.getStructuringElement(cv.MORPH_CROSS, (5, 5))
-    closed=cv.morphologyEx(binary,cv.MORPH_CLOSE,kernel);
-    opened=cv.morphologyEx(closed,cv.MORPH_OPEN,kernel);#this is the final
+    closed=cv.morphologyEx(binary,cv.MORPH_CLOSE,kernel)
+    opened=cv.morphologyEx(closed,cv.MORPH_OPEN,kernel)#this is the final
     #show pic used to debug
-    smallpic=cv.resize(opened,(int(w/2),int(h/2)))
-    cv.imshow("pic", smallpic)
-    cv.waitKey(2)
+    #smallpic=cv.resize(opened,(int(w/2),int(h/2)))
+    cv.imshow("pic", opened)
+    cv.waitKey(1)
     #calcualte the edge
     i = h - 1
     while (i > 0) & (opened[i, 0] > 0):
@@ -120,9 +120,9 @@ def main():
     #init parameter
     DELAY=0
     RATIO=0.2
-    SLEEP_TIME=0.2
+    
     TURN_THRES=20
-    INSIDE_THRESH=1.0/9.0
+    INSIDE_THRESH=1.0/7.0
     element=cv.getStructuringElement(cv.MORPH_CROSS,(5,5))#what for?
     start=time.time()
     cap = cv.VideoCapture(0)
@@ -141,7 +141,7 @@ def main():
             Back(SLEEP_TIME)
             print("[WARNING]edge not found\n")
         elif(left_edge <= middle_edge and middle_edge <=right_edge):#left lower than right, turn right
-            if (right_edge >= 480 * RATIO * INSIDE_THRESH):# right is very high
+            if (left_edge >= 480 * RATIO * INSIDE_THRESH):# right is very high
                 RightSlow(SLEEP_TIME)
             else:# right low
                 RightFast(SLEEP_TIME)
@@ -156,10 +156,19 @@ def main():
             Back(SLEEP_TIME)
         else:#good
             if(diff>TURN_THRES):
-                RightSlow(SLEEP_TIME)
-            elif(diff<-TURN_THRES):
                 LeftSlow(SLEEP_TIME)
+            elif(diff<-TURN_THRES):
+                RightSlow(SLEEP_TIME)
             else:
                 Forward(SLEEP_TIME)
+        
+def testmotion():
+    Forward(3)
+    Back(3)
+    LeftFast(3)
+    RightFast(3)
+    LeftSlow(3)
+    RightSlow(3)
 if __name__ == '__main__':
     main()
+    #testmotion()
